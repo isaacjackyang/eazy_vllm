@@ -8,7 +8,7 @@
 
 - `install_wsl2_ubuntu.cmd`：安裝 `WSL2` 與 `Ubuntu-22.04`，必須用系統管理員身分執行。
 - `setup_vllm_wsl.cmd`：在 WSL2 的 Ubuntu 內更新套件、建立 `~/vllm-env`，並安裝 `vllm`。
-- `start_vllm_server.cmd`：啟動雙卡 `vLLM` 伺服器，預設模型是 `Qwen/Qwen2.5-14B-Instruct-AWQ`。
+- `start_vllm_server.cmd`：啟動雙卡 `vLLM` 伺服器，預設模型是 `gemma4 31b Q4_K_M`。
 
 也可以先用 `--dry-run` 檢查腳本會執行什麼命令：
 
@@ -87,7 +87,7 @@ pip install vllm
 安裝完成後，可用以下指令啟動 OpenAI 相容的 API 伺服器：
 
 ```bash
-vllm serve "Qwen/Qwen2.5-14B-Instruct-AWQ" \
+vllm serve "gemma4 31b Q4_K_M" \
   --tensor-parallel-size 2 \
   --max-model-len 8192 \
   --gpu-memory-utilization 0.9 \
@@ -106,14 +106,14 @@ vllm serve "Qwen/Qwen2.5-14B-Instruct-AWQ" \
 之後每次重新開機，不需要手動先輸入 `wsl` 再逐步啟動虛擬環境。只要在一般 Windows PowerShell 輸入以下單行指令即可：
 
 ```powershell
-# 請將 your_ubuntu_username 與 your-model-name-or-path 替換成實際值
-wsl -d Ubuntu-22.04 -u your_ubuntu_username -- bash -lc "source ~/vllm-env/bin/activate && vllm serve 'your-model-name-or-path' --tensor-parallel-size 2 --max-model-len 8192 --gpu-memory-utilization 0.9 --port 8000"
+# 請將 your_ubuntu_username 替換成實際值；預設模型為 gemma4 31b Q4_K_M
+wsl -d Ubuntu-22.04 -u your_ubuntu_username -- bash -lc "source ~/vllm-env/bin/activate && vllm serve 'gemma4 31b Q4_K_M' --host 0.0.0.0 --tensor-parallel-size 2 --max-model-len 8192 --gpu-memory-utilization 0.9 --port 8000"
 ```
 
 如果你要直接使用前面的範例模型，命令可以寫成：
 
 ```powershell
-wsl -d Ubuntu-22.04 -u your_ubuntu_username -- bash -lc "source ~/vllm-env/bin/activate && vllm serve 'Qwen/Qwen2.5-14B-Instruct-AWQ' --tensor-parallel-size 2 --max-model-len 8192 --gpu-memory-utilization 0.9 --port 8000"
+wsl -d Ubuntu-22.04 -u your_ubuntu_username -- bash -lc "source ~/vllm-env/bin/activate && vllm serve 'gemma4 31b Q4_K_M' --host 0.0.0.0 --tensor-parallel-size 2 --max-model-len 8192 --gpu-memory-utilization 0.9 --port 8000"
 ```
 
 如果你想直接用現成腳本，平常可直接執行：
@@ -125,7 +125,7 @@ start_vllm_server.cmd
 如果要臨時改模型，不用改檔案，直接把模型名稱當參數傳入即可：
 
 ```cmd
-start_vllm_server.cmd "Qwen/Qwen2.5-14B-Instruct-AWQ"
+start_vllm_server.cmd "gemma4 31b Q4_K_M"
 ```
 
 ## 與 OpenClaw 連接
@@ -139,7 +139,7 @@ http://127.0.0.1:8000/v1
 如果你主要就是要讓 Windows 端的 `OpenClaw` 連進 WSL2 內的 `vLLM`，建議把啟動命令改成明確綁定所有介面：
 
 ```bash
-vllm serve "Qwen/Qwen2.5-14B-Instruct-AWQ" \
+vllm serve "gemma4 31b Q4_K_M" \
   --host 0.0.0.0 \
   --port 8000 \
   --tensor-parallel-size 2 \

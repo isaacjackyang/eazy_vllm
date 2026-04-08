@@ -3,7 +3,7 @@ setlocal EnableExtensions
 
 set "DISTRO=Ubuntu-22.04"
 set "VENV_NAME=vllm-env"
-set "MODEL=Qwen/Qwen2.5-14B-Instruct-AWQ"
+set "MODEL=gemma4 31b Q4_K_M"
 set "HOST=0.0.0.0"
 set "TENSOR_PARALLEL_SIZE=2"
 set "MAX_MODEL_LEN=8192"
@@ -65,9 +65,9 @@ exit /b %errorlevel%
 :usage
 echo Usage:
 echo   start_vllm_server.cmd
-echo   start_vllm_server.cmd "Qwen/Qwen2.5-14B-Instruct-AWQ"
+echo   start_vllm_server.cmd "gemma4 31b Q4_K_M"
 echo   start_vllm_server.cmd --dry-run
-echo   start_vllm_server.cmd --dry-run "Qwen/Qwen2.5-14B-Instruct-AWQ"
+echo   start_vllm_server.cmd --dry-run "gemma4 31b Q4_K_M"
 echo.
 echo Notes:
 echo   - Edit the config values at the top of this file if needed.
