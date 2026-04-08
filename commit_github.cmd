@@ -2,7 +2,7 @@
 setlocal EnableExtensions
 
 rem ============================================================
-set "PROJECT_NAME=eazy_vllm"
+set "PROJECT_NAME=easy_vllm"
 
 rem EDIT HERE 1:
 rem By default, use the repository folder that contains this script.
@@ -10,11 +10,11 @@ set "DEFAULT_REPO=%~dp0"
 
 rem EDIT HERE 2:
 rem Expected GitHub repository for this project.
-set "EXPECTED_REMOTE=https://github.com/isaacjackyang/eazy_vllm"
+set "EXPECTED_REMOTE=https://github.com/isaacjackyang/easy_vllm"
 
 rem EDIT HERE 3:
 rem Change this message before double-clicking if needed.
-set "DEFAULT_COMMIT_MESSAGE=Update eazy_vllm files"
+set "DEFAULT_COMMIT_MESSAGE=Update easy_vllm files"
 rem ============================================================
 
 if /I "%~1"=="/?" goto :usage
@@ -163,7 +163,7 @@ echo.
 echo Examples:
 echo   commit_github.cmd "Update Android automation logic"
 echo   commit_github.cmd . "Tune tap timing and detection"
-echo   commit_github.cmd "C:\Users\USER\Documents\GitHub\eazy_vllm" "Adjust app behavior"
+echo   commit_github.cmd "C:\Users\USER\Documents\GitHub\easy_vllm" "Adjust app behavior"
 exit /b 0
 
 :normalize_remote

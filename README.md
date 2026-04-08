@@ -1,4 +1,4 @@
-# eazy_vllm
+# easy_vllm
 
 請完全放棄在原生 Windows Python 環境下安裝 `vLLM` 的想法。這個專案的建議做法是只使用 `WSL2 + Ubuntu 22.04 + Python virtualenv`，避免 Windows 原生 Python、驅動、CUDA 與套件相依性衝突。
 
