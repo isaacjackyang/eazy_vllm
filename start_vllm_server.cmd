@@ -4,6 +4,7 @@ setlocal EnableExtensions
 set "DISTRO=Ubuntu-22.04"
 set "VENV_NAME=vllm-env"
 set "MODEL=Qwen/Qwen2.5-14B-Instruct-AWQ"
+set "HOST=0.0.0.0"
 set "TENSOR_PARALLEL_SIZE=2"
 set "MAX_MODEL_LEN=8192"
 set "GPU_MEMORY_UTILIZATION=0.9"
@@ -33,11 +34,12 @@ goto :collect_args
 :args_done
 if defined MODEL_OVERRIDE set "MODEL=%MODEL_OVERRIDE%"
 
-set "WSL_COMMAND=set -e; if [ ! -f ~/%VENV_NAME%/bin/activate ]; then echo 'Virtual environment ~/%VENV_NAME% was not found. Run setup_vllm_wsl.cmd first.'; exit 1; fi; . ~/%VENV_NAME%/bin/activate; vllm serve '%MODEL%' --tensor-parallel-size %TENSOR_PARALLEL_SIZE% --max-model-len %MAX_MODEL_LEN% --gpu-memory-utilization %GPU_MEMORY_UTILIZATION% --port %PORT%"
+set "WSL_COMMAND=set -e; if [ ! -f ~/%VENV_NAME%/bin/activate ]; then echo 'Virtual environment ~/%VENV_NAME% was not found. Run setup_vllm_wsl.cmd first.'; exit 1; fi; . ~/%VENV_NAME%/bin/activate; vllm serve '%MODEL%' --host %HOST% --tensor-parallel-size %TENSOR_PARALLEL_SIZE% --max-model-len %MAX_MODEL_LEN% --gpu-memory-utilization %GPU_MEMORY_UTILIZATION% --port %PORT%"
 
 echo Distro       : %DISTRO%
 echo Venv Name    : %VENV_NAME%
 echo Model        : %MODEL%
+echo Host         : %HOST%
 echo TP           : %TENSOR_PARALLEL_SIZE%
 echo Max Model Len: %MAX_MODEL_LEN%
 echo GPU Memory   : %GPU_MEMORY_UTILIZATION%

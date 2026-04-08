@@ -128,6 +128,50 @@ start_vllm_server.cmd
 start_vllm_server.cmd "Qwen/Qwen2.5-14B-Instruct-AWQ"
 ```
 
+## 與 OpenClaw 連接
+
+WSL2 內啟動的 `vLLM`，一般可以讓 Windows 端的 `OpenClaw` 透過本機位址直接連線。實務上建議把 `vLLM` 的 API 視為：
+
+```text
+http://127.0.0.1:8000/v1
+```
+
+如果你主要就是要讓 Windows 端的 `OpenClaw` 連進 WSL2 內的 `vLLM`，建議把啟動命令改成明確綁定所有介面：
+
+```bash
+vllm serve "Qwen/Qwen2.5-14B-Instruct-AWQ" \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --tensor-parallel-size 2 \
+  --max-model-len 8192 \
+  --gpu-memory-utilization 0.9
+```
+
+### OpenClaw 設定方向
+
+在 `OpenClaw` 內，重點是把本地模型提供者指向 `vLLM` 的 OpenAI 相容端點：
+
+```json
+{
+  "baseUrl": "http://127.0.0.1:8000/v1",
+  "apiKey": "sk-local",
+  "api": "openai-responses"
+}
+```
+
+### 注意事項
+
+- 若 `OpenClaw` 能列出模型，但 agent 實際執行失敗，通常先檢查相容性設定，而不一定是 WSL2 網路本身有問題。
+- 某些 OpenAI-compatible 後端在 `OpenClaw` 下可能需要補 `compat.supportsTools: false`。
+- 某些後端也可能需要 `compat.requiresStringContent: true`。
+- 若你要從 Windows 直接測試 `vLLM` 是否有成功對外提供服務，可以先用瀏覽器或 `curl` 測 `http://127.0.0.1:8000/v1/models`。
+
+### 參考文件
+
+- `OpenClaw` 本地模型與 OpenAI-compatible 後端說明：<https://docs.openclaw.ai/gateway/local-models>
+- `vLLM` OpenAI-compatible server 文件：<https://docs.vllm.ai/en/stable/cli/serve/>
+- Microsoft WSL 網路說明：<https://learn.microsoft.com/en-us/windows/wsl/networking>
+
 ## 建議檢查事項
 
 - 確認 Windows 顯示卡驅動已更新到支援 WSL2 GPU 的版本。
