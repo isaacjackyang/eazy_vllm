@@ -5,9 +5,7 @@ set "DISTRO=Ubuntu-22.04"
 set "VENV_NAME=vllm-env"
 set "MODEL=TeichAI/gemma-4-31B-it-Claude-Opus-Distill"
 set "HOST=0.0.0.0"
-set "TENSOR_PARALLEL_SIZE=2"
 set "MAX_MODEL_LEN=96000"
-set "GPU_MEMORY_UTILIZATION=0.9"
 set "PORT=8000"
 set "DRY_RUN=0"
 set "MODEL_OVERRIDE="
@@ -39,16 +37,22 @@ goto :collect_args
 :args_done
 if defined MODEL_OVERRIDE set "MODEL=%MODEL_OVERRIDE%"
 
-set "WSL_COMMAND=set -e; if [ ! -f ~/%VENV_NAME%/bin/activate ]; then echo 'Virtual environment ~/%VENV_NAME% was not found. Run setup_vllm_wsl.cmd first.'; exit 1; fi; . ~/%VENV_NAME%/bin/activate; vllm serve '%MODEL%' --host %HOST% --tensor-parallel-size %TENSOR_PARALLEL_SIZE% --max-model-len %MAX_MODEL_LEN% --gpu-memory-utilization %GPU_MEMORY_UTILIZATION% --port %PORT%"
+set "API_BASE_URL=http://127.0.0.1:%PORT%/v1"
+set "WSL_COMMAND=set -e; if [ ! -f ~/%VENV_NAME%/bin/activate ]; then echo 'Virtual environment ~/%VENV_NAME% was not found. Run setup_vllm_wsl.cmd first.'; exit 1; fi; . ~/%VENV_NAME%/bin/activate; vllm serve '%MODEL%' --host %HOST% --port %PORT% --max-model-len %MAX_MODEL_LEN%"
 
-echo Distro       : %DISTRO%
-echo Venv Name    : %VENV_NAME%
-echo Model        : %MODEL%
-echo Host         : %HOST%
-echo TP           : %TENSOR_PARALLEL_SIZE%
-echo Max Model Len: %MAX_MODEL_LEN%
-echo GPU Memory   : %GPU_MEMORY_UTILIZATION%
-echo Port         : %PORT%
+echo OpenClaw Mode : Windows OpenClaw to WSL2 vLLM
+echo Distro        : %DISTRO%
+echo Venv Name     : %VENV_NAME%
+echo Model         : %MODEL%
+echo Host          : %HOST%
+echo Max Model Len : %MAX_MODEL_LEN%
+echo Port          : %PORT%
+echo Endpoint      : %API_BASE_URL%
+echo API Key       : sk-local
+echo API           : openai-responses
+echo Test URL      : %API_BASE_URL%/models
+echo.
+echo Keep this window open while the vLLM server is running.
 
 if "%DRY_RUN%"=="1" (
     echo.
@@ -71,33 +75,35 @@ if errorlevel 1 (
 )
 
 echo.
-echo Starting vLLM server...
+echo Starting vLLM server for OpenClaw...
 wsl -d %DISTRO% -- bash -lc "%WSL_COMMAND%"
 set "WSL_EXIT_CODE=%errorlevel%"
 if not "%WSL_EXIT_CODE%"=="0" (
     echo.
-    echo vLLM server exited with code %WSL_EXIT_CODE%.
+    echo OpenClaw vLLM server exited with code %WSL_EXIT_CODE%.
     echo Check the output above for the reason.
     call :pause_if_needed
     exit /b %WSL_EXIT_CODE%
 )
+
 echo.
-echo vLLM server stopped.
+echo OpenClaw vLLM server stopped.
 call :pause_if_needed
 exit /b 0
 
 :usage
 echo Usage:
-echo   start_vllm_server.cmd
-echo   start_vllm_server.cmd "TeichAI/gemma-4-31B-it-Claude-Opus-Distill"
-echo   start_vllm_server.cmd --dry-run
-echo   start_vllm_server.cmd --dry-run "TeichAI/gemma-4-31B-it-Claude-Opus-Distill"
-echo   start_vllm_server.cmd --no-pause
+echo   start_vllm_server_openclaw.cmd
+echo   start_vllm_server_openclaw.cmd "TeichAI/gemma-4-31B-it-Claude-Opus-Distill"
+echo   start_vllm_server_openclaw.cmd --dry-run
+echo   start_vllm_server_openclaw.cmd --dry-run "TeichAI/gemma-4-31B-it-Claude-Opus-Distill"
+echo   start_vllm_server_openclaw.cmd --no-pause
 echo.
 echo Notes:
-echo   - Edit the config values at the top of this file if needed.
-echo   - If you pass a model path or name, it overrides the default MODEL value.
-echo   - Double-click mode keeps this window open after the server stops or if startup fails.
+echo   - Default command:
+echo     vllm serve TeichAI/gemma-4-31B-it-Claude-Opus-Distill --host 0.0.0.0 --port 8000 --max-model-len 96000
+echo   - This script prints the OpenClaw endpoint before starting the server.
+echo   - Double-click mode keeps this window open after the server stops or startup fails.
 echo   - Add --no-pause when running from an existing terminal.
 call :pause_if_needed
 exit /b 0
